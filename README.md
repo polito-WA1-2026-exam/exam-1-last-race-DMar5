@@ -9,16 +9,19 @@
 
 ## API Server
 
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
-  - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
+- GET `/api/network`
+  - No request parameters and no request body content
+  - Response body content: list of lines
+
+- GET `/api/stations`
+- GET `/api/segments`
+- PUT `/api/segment/:s_id/select`
+- GET `/api/route`
+- PUT `/api/route/reset`
+- GET `/api/events`
+- POST `/api/score/me`
+- GET `/api/scores/me`
+
 
 ## Database Tables
 
