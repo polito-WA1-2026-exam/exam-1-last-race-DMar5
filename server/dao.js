@@ -14,6 +14,7 @@ export const listStationsInLines = () => {
     return new Promise((resolve, reject) => {
         const sql = `
             SELECT
+                SIL.id,
                 L.line_name,
                 L.line_colour,
                 S.station_name,
@@ -27,7 +28,8 @@ export const listStationsInLines = () => {
             if (err)
                 reject(err);
             else {
-                const stationsInLine = rows.map(s => new StationInLine(s.line_name, 
+                const stationsInLine = rows.map(s => new StationInLine(s.id,
+                                                                       s.line_name, 
                                                                        s.line_colour,
                                                                        s.station_name,
                                                                        s.orderInLine));
@@ -61,13 +63,14 @@ export const listSegments = () => {
     return new Promise((resolve, reject) => {
         const sql = `
             SELECT 
+                S.segmentID,
                 S1.station_name AS station1_name, 
                 S2.station_name AS station2_name, 
                 line_name,
                 line_colour
             FROM Segments as S
-            JOIN Stations AS S1 ON S.station1_ID = S1.station_ID
-            JOIN Stations AS S2 ON S.station2_ID = S2.station_ID
+            JOIN Stations AS S1 ON S.station1_ID = S1.stationID
+            JOIN Stations AS S2 ON S.station2_ID = S2.stationID
             JOIN Lines AS L ON S.lineID = L.lineID
         `;
 
@@ -75,7 +78,8 @@ export const listSegments = () => {
             if (err)
                 reject(err);
             else {
-                const segments = rows.map(s => new Segment(s.station1_name,
+                const segments = rows.map(s => new Segment(s.segmentID,
+                                                           s.station1_name,
                                                            s.station2_name,
                                                            s.line_name,
                                                            s.line_colour));
@@ -95,7 +99,7 @@ export const listEvents = () => {
             if (err)
                 reject(err);
             else {
-                const events = rows.map(r => new Event(r.title, r.description, r.gain));
+                const events = rows.map(r => new Event(r.eventID, r.title, r.description, r.gain));
                 resolve(events);
             }
         });
@@ -107,8 +111,8 @@ export const listEvents = () => {
 // Retrieves the list of score for the authenticated user
 export const listScores = (userId) => {
     return new Promise((resolve, reject) => {
-        const sql = "SELECT value, date FROM scores ORDER BY value DESC";
-        db.all(sql, [], function(err, rows) {
+        const sql = "SELECT value, date FROM scores WHERE gamerID = ? ORDER BY value DESC";
+        db.all(sql, [userId], function(err, rows) {
             if(err)
                 reject(err);
             else {
@@ -145,12 +149,12 @@ export const getUser = (username, password) => {
                 resolve(false);
             }
             else { // Username was found, check password is correct
-                const user = new User(row.id, row.first_name, row.last_name, row.email);
+                const user = new User(row.userID, row.first_name, row.last_name, row.email);
 
                 crypto.scrypt(password, row.salt, 16, function(err, hash_pass) {
                     if (err)
                         reject(err);
-                    if (!crypto.timingSafeEqual(Buffer.from(row.password, "hex"), hash_pass))
+                    if (!crypto.timingSafeEqual(Buffer.from(row.password_hash, "hex"), hash_pass))
                         resolve(false);
                     else
                         resolve(user);

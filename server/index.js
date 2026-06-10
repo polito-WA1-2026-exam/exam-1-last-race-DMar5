@@ -6,10 +6,16 @@ import cors from "cors";
 import passport from "passport";
 import LocalStrategy from "passport-local";
 import session from "express-session";
-import {} from "express-validator";
+import {check, validationResult} from "express-validator";
 
 import dayjs from "dayjs";
-import {getUser} from "./dao.js";
+import {listStationsInLines, 
+        getUser,
+        listSegments,
+        listStations,
+        listEvents,
+        listScores,
+        addScore} from "./dao.js";
 
 // init express
 const app = new express();
@@ -28,7 +34,7 @@ app.use(cors(corsOptions));
 
 passport.use(new LocalStrategy(async function verify(username, password, cb) {
     const user = await getUser(username, password);
-    if(!user) // If the user is null
+    if(!user) // If getUser has resolved false
         return cb(null, false, "Incorrect username or password.");
     return cb(null, user);
 }));
@@ -84,14 +90,53 @@ app.delete("/api/sessions/current", function(req, res) {
 
 // GET /api/network
 app.get("/api/network", isLoggedIn, function (req, res) {
-
+    listStationsInLines()
+        .then(stations => res.json(stations))
+        .catch(err => res.status(500).json(err));
 });
 
 // GET /api/stations
+app.get("/api/stations", isLoggedIn, function (req, res) {
+    listStations()
+        .then(stations => res.json(stations))
+        .catch(err => res.status(500).json(err))
+});
+
 // GET /api/segments
+app.get("/api/segments", isLoggedIn, function (req, res) {
+    listSegments()
+        .then(segments => res.json(segments))
+        .catch(err => res.status(500).json(err))
+});
+
 // GET /api/events
+app.get("/api/events", isLoggedIn, function (req, res) {
+    listEvents()
+        .then(events => res.json(events))
+        .catch(err => res.status(500).json(err))
+});
+
 // POST /api/score/me
+app.post("/api/score/me", isLoggedIn,[
+    check("score").isInt({min:0})
+], function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({error:errors.array()});
+    }
+
+    const date = dayjs().format("YYYY-MM-DD HH:mm:ss");
+    addScore(req.user.id, req.body.score, date)
+        .then(newId => res.status(201).json({id:newId}))
+        .catch((err) => res.status(503).json(err));
+});
+
 // GET /api/scores/me
+app.get("/api/scores/me", isLoggedIn, function (req, res) {
+    listScores(req.user.id)
+        .then(scores => res.json(scores))
+        .catch(err => res.status(500).json(err))
+});
 
 // Activate the server
 app.listen(port, () => {

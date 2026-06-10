@@ -10,7 +10,7 @@
 ## API Server
 - POST `/api/sessions`
 - GET `/api/sessions/current`
-- DELETE `/api/session/current`
+- DELETE `/api/sessions/current`
 
 - GET `/api/network`
   - No request parameters and no request body content

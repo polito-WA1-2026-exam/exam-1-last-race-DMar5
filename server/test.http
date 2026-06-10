@@ -1,0 +1,47 @@
+POST http://localhost:3001/api/sessions
+content-type: application/json
+
+{
+    "username": "Victo10",
+    "password": "Vittoria123!"
+}
+
+###
+
+GET http://localhost:3001/api/sessions/current
+
+
+###
+
+GET http://localhost:3001/api/network
+
+###
+
+GET http://localhost:3001/api/stations
+
+###
+
+GET http://localhost:3001/api/segments
+
+###
+
+GET http://localhost:3001/api/events
+
+###
+
+POST http://localhost:3001/api/score/me
+content-type: application/json
+
+{
+    "score": 10
+}
+
+###
+
+GET http://localhost:3001/api/scores/me
+
+###
+
+DELETE http://localhost:3001/api/sessions/current
+
+###
