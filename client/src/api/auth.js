@@ -1,5 +1,3 @@
-import {User} from "../models/models.js"
-
 async function doLogin(username, password) {
     try {
         const response = await fetch("http://localhost:3001/api/sessions", {
@@ -13,7 +11,7 @@ async function doLogin(username, password) {
         });
         if (response.ok) {
             const user = await response.json();
-            return new User(user.id, user.name, user.surname, user.email);
+            return user;
         }
         else {
             throw new Error("Login failed");
@@ -57,4 +55,4 @@ async function checkSession() {
     }
 }
 
-export default { doLogin, doLogout, checkSession }
+export { doLogin, doLogout, checkSession }

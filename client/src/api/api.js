@@ -44,7 +44,7 @@ async function getSegments() {
 
         if (response.ok) {
             const list_segments = await response.json();
-            const listSegments = list_segments.map(s => new Segment(s.id, s.station1_name, s.station2_name, s.line_name, s.line_colour));
+            const listSegments = list_segments.map(s => new Segment(s.id, s.station1_name, s.station2_name, s.line_name, s.line_colour, false));
         }
         else {
             throw new Error("HTTP error in getSegments, code = " + response.status 

@@ -1,10 +1,3 @@
-function User(id, name, surname, email) {
-    this.id = id;
-    this.name = name;
-    this.surname = surname;
-    this.email = email;
-}
-
 function StationInLine(id, line_name, line_colour, station_name, orderInLine) {
     this.id = id;
     this.line_name = line_name;
@@ -13,12 +6,13 @@ function StationInLine(id, line_name, line_colour, station_name, orderInLine) {
     this.orderInLine = orderInLine;
 }
 
-function Segment(id, station1_name, station2_name, line_name, line_colour) {
+function Segment(id, station1_name, station2_name, line_name, line_colour, selected=false) {
     this.id = id;
     this.station1_name = station1_name;
     this.station2_name = station2_name;
     this.line_name = line_name;
     this.line_colour = line_colour;
+    this.selected = selected;
 }
 
 function Event(id, title, description, gain) {
