@@ -28,4 +28,4 @@ function Score(value, date) {
 }
 
 
-export {User, StationInLine, Segment, Event, Score}
+export {StationInLine, Segment, Event, Score}

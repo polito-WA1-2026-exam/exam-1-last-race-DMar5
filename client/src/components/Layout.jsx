@@ -1,8 +1,8 @@
-import { useContext } from "react"
-import { Container, Navbar, Nav, Button } from "react-bootstrap"
-import { Outlet, Link } from "react-router"
+import { useContext } from "react";
+import { Container, Navbar, Nav, Button } from "react-bootstrap";
+import { Outlet, Link } from "react-router";
 
-import UserContext from '../contexts/UserContext.js'
+import UserContext from '../contexts/UserContext.js';
 
 {/* Style better the layout */}
 

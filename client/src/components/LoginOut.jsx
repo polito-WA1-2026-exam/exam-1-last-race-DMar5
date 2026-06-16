@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
-import { doLogin, doLogout } from '../api/auth.js'
+import { doLogin, doLogout } from '../api/auth.js';
 
 function LoginForm(props) {
     const [username, setUsername] = useState("");

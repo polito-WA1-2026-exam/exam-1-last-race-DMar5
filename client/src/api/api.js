@@ -1,4 +1,4 @@
-import {User, StationInLine, Segment, Event, Score} from "../models/models.js"
+import { StationInLine, Segment, Event, Score } from "../models/models.js";
 
 async function getNetworkMap() {
     try {
@@ -45,6 +45,7 @@ async function getSegments() {
         if (response.ok) {
             const list_segments = await response.json();
             const listSegments = list_segments.map(s => new Segment(s.id, s.station1_name, s.station2_name, s.line_name, s.line_colour, false));
+            return listSegments;
         }
         else {
             throw new Error("HTTP error in getSegments, code = " + response.status 
@@ -64,6 +65,7 @@ async function getEvents() {
         if (response.ok) {
             const list_events = await response.json();
             const listEvents = list_events.map(e => new Event(e.id, e.title, e.description, e.gain));
+            return listEvents;
         }
         else {
             throw new Error("HTTP error in getEvents, code = " + response.status 
@@ -83,6 +85,7 @@ async function getOrderedScores() {
         if (response.ok) {
             const list_scores = await response.json();
             const listOrderedScores = list_scores.map(s => new Score(s.value, s.date));
+            return listOrderedScores;
         }
         else {
             throw new Error("HTTP error in getOrderedScores, code = " + response.status 
@@ -121,4 +124,4 @@ async function saveScore(newScore) {
     }
 }
 
-export default { getNetworkMap, getStations, getSegments, getEvents, getOrderedScores, saveScore }
+export { getNetworkMap, getStations, getSegments, getEvents, getOrderedScores, saveScore }

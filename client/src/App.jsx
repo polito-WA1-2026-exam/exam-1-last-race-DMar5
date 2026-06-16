@@ -3,15 +3,15 @@ import { useContext, useState } from 'react'
 import { Container } from 'react-bootstrap';
 import { Route, Routes, useNavigate } from 'react-router';
 
-import { Layout, HomeView } from './components/Layout.jsx'
-import { LoginForm, Logout } from './components/LoginOut.jsx'
-import StartView from './components/StartView.jsx'
-import ResultView from './components/ResultView.jsx'
-import RankingsView from './components/RankingsView.jsx'
-import PlanningView from './components/PlanningView.jsx'
-import ExecutionView from './components/ExecutionView.jsx'
+import { Layout, HomeView } from './components/Layout.jsx';
+import { LoginForm, Logout } from './components/LoginOut.jsx';
+import StartView from './components/StartView.jsx';
+import ResultView from './components/ResultView.jsx';
+import RankingsView from './components/RankingsView.jsx';
+import PlanningView from './components/PlanningView.jsx';
+import ExecutionView from './components/ExecutionView.jsx';
 
-import UserContext from './contexts/UserContext.js'
+import UserContext from './contexts/UserContext.js';
 
 function App() {
 
@@ -36,7 +36,7 @@ function App() {
                         <Route path='planning' element={<PlanningView />} />
                         <Route path='execute' element={<ExecutionView />} />
                         <Route path='result' element={<ResultView />} />
-                        <Route path='rankings' element={<RankingsView />} />
+                        <Route path='rankings' element={<RankingsView name={user.name} surname={user.surname}/>} />
                         <Route path='login' element={<LoginForm updateUser={updateUser}/>} />
                         <Route path='logout' element={<Logout updateUser={updateUser}/>} />
                     </Route>
