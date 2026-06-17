@@ -18,6 +18,7 @@ async function doLogin(username, password) {
         }
     }
     catch(err) {
+        if (err.message.startsWith("Login failed")) throw err;
         throw new Error("Network error", {cause:err});
     }
 }
@@ -36,6 +37,7 @@ async function doLogout() {
         }
     }
     catch(err) {
+        if (err.message.startsWith("Logout failed")) throw err;
         throw new Error("Network error", {cause:err});
     }
 }

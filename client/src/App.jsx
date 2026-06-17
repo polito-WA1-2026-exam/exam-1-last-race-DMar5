@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { Container } from 'react-bootstrap';
 import { Route, Routes, useNavigate } from 'react-router';
@@ -12,6 +12,9 @@ import PlanningView from './components/PlanningView.jsx';
 import ExecutionView from './components/ExecutionView.jsx';
 
 import UserContext from './contexts/UserContext.js';
+import StationsContext from './contexts/StationsContext.js';
+import SegmentsContext from './contexts/SegmentsContext.js';
+import { getStations, getSegments } from './api/api.js';
 
 function App() {
 
@@ -28,22 +31,89 @@ function App() {
 
     return (
         <UserContext.Provider value={user}>
-            <Container>
-                <Routes>
-                    <Route path='/' element={<Layout />}>
-                        <Route index element={<HomeView />} />
-                        <Route path='game' element={<StartView />} />
-                        <Route path='planning' element={<PlanningView />} />
-                        <Route path='execute' element={<ExecutionView />} />
-                        <Route path='result' element={<ResultView />} />
-                        <Route path='rankings' element={<RankingsView name={user.name} surname={user.surname}/>} />
-                        <Route path='login' element={<LoginForm updateUser={updateUser}/>} />
-                        <Route path='logout' element={<Logout updateUser={updateUser}/>} />
-                    </Route>
-                </Routes>
-            </Container>
+            <StationsProvider>
+                <SegmentsProvider>
+                    <Container>
+                        <Routes>
+                            <Route path='/' element={<Layout />}>
+                                <Route index element={<HomeView />} />
+                                <Route path='game' element={<StartView />} />
+                                <Route path='planning' element={<PlanningView />} />
+                                <Route path='execute' element={<ExecutionView />} />
+                                <Route path='result' element={<ResultView />} />
+                                <Route path='rankings' element={<RankingsView name={user.name} surname={user.surname}/>} />
+                                <Route path='login' element={<LoginForm updateUser={updateUser}/>} />
+                                <Route path='logout' element={<Logout updateUser={updateUser}/>} />
+                            </Route>
+                        </Routes>
+                    </Container>
+                </SegmentsProvider>
+            </StationsProvider>
         </UserContext.Provider>
     )
+}
+
+function StationsProvider({children}) {
+    const user = useContext(UserContext);
+
+    const [stations, setStations] = useState([]);
+    const [errorSt, setError] = useState("");
+
+    useEffect(() => {
+        async function getStationsList() {
+            try {
+                if (!user.id) {
+                    setStations([]);
+                    return;
+                }
+                else {
+                    const list_stations = await getStations();
+                    setStations(list_stations);
+                    setError("");
+                }
+            }
+            catch(err) {
+                setError(err.message);
+            }
+        }
+        getStationsList();
+    }, [user.id]);
+
+    return (<StationsContext.Provider value={{stations, errorSt}}>
+        {children}
+    </StationsContext.Provider>);
+    
+}
+
+function SegmentsProvider({children}) {
+    const user = useContext(UserContext);
+
+    const [segments, setSegments] = useState([]);
+    const [errorSeg, setError] = useState("");
+
+    useEffect(() => {
+        async function getSegmentsList() {
+            try {
+                if (!user.id) {
+                    setSegments([]);
+                    return;
+                }
+                else {
+                    const list_segments = await getSegments();
+                    setSegments(list_segments);
+                    setError("");
+                }
+            }
+            catch(err) {
+                setError(err.message);
+            }
+        }
+        getSegmentsList();
+    }, [user.id]);
+
+    return (<SegmentsContext.Provider value={{segments, errorSeg}}>
+        {children}
+    </SegmentsContext.Provider>);
 }
 
 export default App

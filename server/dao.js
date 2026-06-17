@@ -34,7 +34,7 @@ export const listStations = () => {
             if (err)
                 reject(err);
             else {
-                const stations = rows.map(s => new Station(s.id, s.station_name, s.x, s.y));
+                const stations = rows.map(s => new Station(s.stationID, s.station_name, s.x, s.y));
                 resolve(stations);
             }
         });
