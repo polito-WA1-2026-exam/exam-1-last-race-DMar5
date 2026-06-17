@@ -9,13 +9,13 @@ import session from "express-session";
 import {check, validationResult} from "express-validator";
 
 import dayjs from "dayjs";
-import {listStationsInLines, 
-        getUser,
+import {getUser,
         listSegments,
         listStations,
         listEvents,
         listScores,
-        addScore} from "./dao.js";
+        addScore,
+        listLines} from "./dao.js";
 
 // init express
 const app = new express();
@@ -88,10 +88,10 @@ app.delete("/api/sessions/current", function(req, res) {
     });
 });
 
-// GET /api/network
-app.get("/api/network", isLoggedIn, function (req, res) {
-    listStationsInLines()
-        .then(stations => res.json(stations))
+// GET /api/lines
+app.get("/api/lines", isLoggedIn, function (req, res) {
+    listLines()
+        .then(lines => res.json(lines))
         .catch(err => res.status(500).json(err));
 });
 

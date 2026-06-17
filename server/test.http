@@ -13,7 +13,11 @@ GET http://localhost:3001/api/sessions/current
 
 ###
 
-GET http://localhost:3001/api/network
+//GET http://localhost:3001/api/network
+
+###
+
+GET http://localhost:3001/api/lines
 
 ###
 

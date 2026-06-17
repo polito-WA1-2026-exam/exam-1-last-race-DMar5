@@ -1,16 +1,16 @@
-import { StationInLine, Segment, Event, Score } from "../models/models.js";
+import { Line, Station, Segment, Event, Score } from "../models/models.js";
 
-async function getNetworkMap() {
+async function getLines() {
     try {
-        const response = await fetch("http://localhost:3001/api/network");
+        const response = await fetch("http://localhost:3001/api/lines");
 
         if (response.ok) {
-            const list_stations_in_line = await response.json();
-            const listStationsInLine = list_stations_in_line.map(s => new StationInLine(s.id, s.line_name, s.line_colour, s.station_name, s.orderInLine));
-            return listStationsInLine;
+            const list_lines = await response.json();
+            const listLines = list_lines.map(l => new Line(l.id, l.line_name, l.line_colour));
+            return listLines;
         }
         else {
-            throw new Error("HTTP error in getNetworkMap, code = " + response.status 
+            throw new Error("HTTP error in getLines, code = " + response.status 
                             + " text = " + response.statusText);
         }
     }
@@ -24,7 +24,8 @@ async function getStations() {
         const response = await fetch("http://localhost:3001/api/stations");
 
         if (response.ok) {
-            const listStations = await response.json();
+            const list_stations = await response.json();
+            const listStations = list_stations.map(s => new Station(s.id, s.station_name, s.x, s.y));
             return listStations;
         }
         else {
@@ -44,7 +45,7 @@ async function getSegments() {
 
         if (response.ok) {
             const list_segments = await response.json();
-            const listSegments = list_segments.map(s => new Segment(s.id, s.station1_name, s.station2_name, s.line_name, s.line_colour, false));
+            const listSegments = list_segments.map(s => new Segment(s.id, s.station1_id, s.station2_id, s.x1, s.y1, s.x2, s.y2, s.lineID));
             return listSegments;
         }
         else {

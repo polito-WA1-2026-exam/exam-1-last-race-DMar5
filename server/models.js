@@ -5,20 +5,28 @@ function User(id, name, surname, email) {
     this.email = email;
 }
 
-function StationInLine(id, line_name, line_colour, station_name, orderInLine) {
+function Line(id, line_name, line_colour) {
     this.id = id;
     this.line_name = line_name;
     this.line_colour = line_colour;
-    this.station_name = station_name;
-    this.orderInLine = orderInLine;
 }
 
-function Segment(id, station1_name, station2_name, line_name, line_colour) {
+function Station(id, station_name, x, y) {
     this.id = id;
-    this.station1_name = station1_name;
-    this.station2_name = station2_name;
-    this.line_name = line_name;
-    this.line_colour = line_colour;
+    this.station_name = station_name;
+    this.x = x;
+    this.y = y;
+}
+
+function Segment(id, s1_id, s2_id, x1, y1, x2, y2, line_id) {
+    this.id = id;
+    this.s1_id = s1_id;
+    this.s2_id = s2_id;
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    this.line_id = line_id;
 }
 
 function Event(id, title, description, gain) {
@@ -34,4 +42,4 @@ function Score(value, date) {
 }
 
 
-export {User, StationInLine, Segment, Event, Score}
+export {User, Line, Station, Segment, Event, Score}

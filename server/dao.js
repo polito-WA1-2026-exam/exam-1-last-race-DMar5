@@ -1,7 +1,7 @@
 import sqlite from "sqlite3";
 import crypto from "crypto";
 
-import {User, StationInLine, Segment, Event, Score} from './models.js';
+import {User, Line, Station, Segment, Event, Score} from './models.js';
 
 const db = new sqlite.Database('database.sqlite', (err) => {
     if (err) throw err;
@@ -10,30 +10,15 @@ const db = new sqlite.Database('database.sqlite', (err) => {
 /** NETWORK LINES **/
 
 // Retrieve the list of lines
-export const listStationsInLines = () => {
+export const listLines = () => {
     return new Promise((resolve, reject) => {
-        const sql = `
-            SELECT
-                SIL.id,
-                L.line_name,
-                L.line_colour,
-                S.station_name,
-                SIL.orderInLine
-            FROM StationsInLine AS SIL
-            JOIN Stations AS S ON SIL.stationID = S.stationID
-            JOIN Lines AS L ON SIL.lineID = L.lineID
-            ORDER BY L.line_name, SIL.orderInLine
-        `;
+        const sql = "SELECT * FROM lines";
         db.all(sql, [], function(err, rows) {
             if (err)
                 reject(err);
             else {
-                const stationsInLine = rows.map(s => new StationInLine(s.id,
-                                                                       s.line_name, 
-                                                                       s.line_colour,
-                                                                       s.station_name,
-                                                                       s.orderInLine));
-                resolve(stationsInLine);
+                const lines = rows.map(l => new Line(l.lineID, l.line_name, l.line_colour));
+                resolve(lines);
             }
         });
     });
@@ -44,12 +29,12 @@ export const listStationsInLines = () => {
 // Retrieve the list of stations
 export const listStations = () => {
     return new Promise((resolve, reject) => {
-        const sql = "SELECT station_name FROM stations";
+        const sql = "SELECT * FROM stations";
         db.all(sql, [], function(err, rows) {
             if (err)
                 reject(err);
             else {
-                const stations = rows.map(s => s.station_name);
+                const stations = rows.map(s => new Station(s.id, s.station_name, s.x, s.y));
                 resolve(stations);
             }
         });
@@ -64,14 +49,16 @@ export const listSegments = () => {
         const sql = `
             SELECT 
                 S.segmentID,
-                S1.station_name AS station1_name, 
-                S2.station_name AS station2_name, 
-                line_name,
-                line_colour
+                S.station1_ID, 
+                S.station2_ID,
+                S1.x AS x1,
+                S1.y AS y1,
+                S2.x AS x2,
+                S2.y AS y2,
+                lineID
             FROM Segments as S
             JOIN Stations AS S1 ON S.station1_ID = S1.stationID
             JOIN Stations AS S2 ON S.station2_ID = S2.stationID
-            JOIN Lines AS L ON S.lineID = L.lineID
         `;
 
         db.all(sql, [], function(err, rows) {
@@ -79,10 +66,13 @@ export const listSegments = () => {
                 reject(err);
             else {
                 const segments = rows.map(s => new Segment(s.segmentID,
-                                                           s.station1_name,
-                                                           s.station2_name,
-                                                           s.line_name,
-                                                           s.line_colour));
+                                                           s.station1_ID,
+                                                           s.station2_ID,
+                                                           s.x1,
+                                                           s.y1,
+                                                           s.x2,
+                                                           s.y2,
+                                                           s.lineID));
                 resolve(segments);
             }
         });

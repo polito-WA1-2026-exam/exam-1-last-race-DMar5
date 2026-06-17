@@ -12,7 +12,7 @@
 - GET `/api/sessions/current`
 - DELETE `/api/sessions/current`
 
-- GET `/api/network`
+- GET `/api/lines`
   - No request parameters and no request body content
   - Response body content: list of lines
 
