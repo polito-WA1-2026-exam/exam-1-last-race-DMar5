@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-
 import { Container } from 'react-bootstrap';
 import { Route, Routes, useNavigate } from 'react-router';
 
@@ -14,6 +13,9 @@ import ExecutionView from './components/ExecutionView.jsx';
 import UserContext from './contexts/UserContext.js';
 import StationsContext from './contexts/StationsContext.js';
 import SegmentsContext from './contexts/SegmentsContext.js';
+import GameScoreContext from './contexts/GameScoreContext.js';
+import GameRouteContext from './contexts/GameRouteContext.js';
+
 import { getStations, getSegments } from './api/api.js';
 
 function App() {
@@ -31,26 +33,34 @@ function App() {
 
     return (
         <UserContext.Provider value={user}>
-            <StationsProvider>
-                <SegmentsProvider>
-                    <Container>
-                        <Routes>
-                            <Route path='/' element={<Layout />}>
-                                <Route index element={<HomeView />} />
-                                <Route path='game' element={<StartView />} />
-                                <Route path='planning' element={<PlanningView />} />
-                                <Route path='execute' element={<ExecutionView />} />
-                                <Route path='result' element={<ResultView />} />
-                                <Route path='rankings' element={<RankingsView name={user.name} surname={user.surname}/>} />
-                                <Route path='login' element={<LoginForm updateUser={updateUser}/>} />
-                                <Route path='logout' element={<Logout updateUser={updateUser}/>} />
-                            </Route>
-                        </Routes>
-                    </Container>
-                </SegmentsProvider>
-            </StationsProvider>
+            <AppProvider>
+                <Container>
+                    <Routes>
+                        <Route path='/' element={<Layout />}>
+                            <Route index element={<HomeView />} />
+                            <Route path='game' element={<StartView />} />
+                            <Route path='planning' element={<PlanningView />} />
+                            <Route path='execute' element={<ExecutionView />} />
+                            <Route path='result' element={<ResultView />} />
+                            <Route path='rankings' element={<RankingsView name={user.name} surname={user.surname}/>} />
+                            <Route path='login' element={<LoginForm updateUser={updateUser}/>} />
+                            <Route path='logout' element={<Logout updateUser={updateUser}/>} />
+                        </Route>
+                    </Routes>
+                </Container>
+            </AppProvider>
         </UserContext.Provider>
     )
+}
+
+function AppProvider({children}) {
+    return (<StationsProvider>
+        <SegmentsProvider>
+            <GameProvider>
+                {children}
+            </GameProvider>
+        </SegmentsProvider>
+    </StationsProvider>);
 }
 
 function StationsProvider({children}) {
@@ -114,6 +124,19 @@ function SegmentsProvider({children}) {
     return (<SegmentsContext.Provider value={{segments, errorSeg}}>
         {children}
     </SegmentsContext.Provider>);
+}
+
+function GameProvider({children}) {
+    const [startStation, setStartStation] = useState(null);
+    const [endStation, setEndStation] = useState(null);
+    const [selectedSegments, setSelectedSegments] = useState(new Set());
+    const [gameScore, setGameScore] = useState(20);
+    const [reasonScore, setReasonScore] = useState("");
+    return (<GameScoreContext.Provider value={{gameScore, reasonScore, setGameScore, setReasonScore}}>
+        <GameRouteContext.Provider value={{startStation, endStation, selectedSegments, setStartStation, setEndStation, setSelectedSegments}}>
+            {children}
+        </GameRouteContext.Provider>
+    </GameScoreContext.Provider>);
 }
 
 export default App

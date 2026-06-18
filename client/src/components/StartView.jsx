@@ -11,6 +11,10 @@ function StartView() {
 
     const navigate = useNavigate();
 
+    const offsetX = 20;
+    const offsetY = 20;
+    const cellSize = 50;
+
     // Error handling
     if (errorSt) {
         return (<div>{"Error with stations loading " + errorSt}</div>);
@@ -28,21 +32,16 @@ function StartView() {
         return (<div>{"Error: segments list is empty"}</div>);
     }
         
-    else {
-        const offsetX = 20;
-        const offsetY = 20;
-        const cellSize = 50;
-
-        return (
-            <div>
-                <svg width={700} height={600}>
-                    <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
-                    <SegmentsView segments={segments} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
-                </svg>
-                <Button onClick={() => navigate('/planning')}> Play </Button>
-            </div>
-        );
-    }
+    return (
+        <div>
+            <svg width={700} height={600}>
+                <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
+                <SegmentsView segments={segments} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
+            </svg>
+            <Button onClick={() => navigate('/planning')}> Play </Button>
+        </div>
+    );
+    
 }
 
 export default StartView

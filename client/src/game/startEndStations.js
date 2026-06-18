@@ -8,14 +8,16 @@ function getStartEndStations(stations, segments) {
 
     const map_stations = createMapStations(segments);
 
+    // Get the id of start station
     let startStation_id = getRandomIntInclusive(min_value, max_value);
 
+    // Arrays to search and save stations
     let list_to_check = [startStation_id];
     let list_invalid_stations = [startStation_id];
     let list_adj_stations = [];
     let count = 0;
 
-    while(count < 2) {
+    while(count < 3) {
         let tmp_to_check = [];
         for (let station_id of list_to_check) {
             list_adj_stations = map_stations.get(station_id);
@@ -43,12 +45,17 @@ function getStartEndStations(stations, segments) {
     return [startStation, endStation];
 }
 
+// Get a random integer between 1 and stations.length
 function getRandomIntInclusive(min, max) {
     const minCeiled = Math.ceil(min);
     const maxFloored = Math.floor(max);
     return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
 }
 
+// Create a map of [key, value] pairs
+// where:
+// key = station id
+// value = list of adjacent station ids
 function createMapStations(segments) {
     const map = new Map();
     for (let seg of segments) {
