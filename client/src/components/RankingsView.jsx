@@ -14,8 +14,6 @@ function RankingsView(props) {
                         .catch((err) => setErrormsg(err.message))
     }, []);
 
-    console.log("Scores state: " + scores);
-
     return <>
         <h1> { "Scores of " + props.name + " " + props.surname } </h1>
         { errormsg ? <div>{errormsg}</div> : <ScoresView scores={scores}/> }
@@ -26,8 +24,6 @@ function ScoresView(props) {
     let result;
     const listScores = props.scores; 
 
-    console.log("ScoresView received: " + listScores);
-
     if (!listScores) {
         result = <div>ERROR: listScores is not available</div>
     }
@@ -36,7 +32,7 @@ function ScoresView(props) {
     }
     else {
         result = <ListGroup>{
-                listScores.map((score) => <ListGroup.Item>
+                listScores.map((score) => <ListGroup.Item key={score.id}>
                     {score.value + "       "}
                     <Badge>{score.date}</Badge>
                 </ListGroup.Item>)

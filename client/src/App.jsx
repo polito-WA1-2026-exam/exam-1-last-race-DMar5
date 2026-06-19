@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap';
 import { Route, Routes, useNavigate } from 'react-router';
 
-import { Layout, HomeView } from './components/Layout.jsx';
+import { Layout, HomeView, GameLayout } from './components/Layouts.jsx';
 import { LoginForm, Logout } from './components/LoginOut.jsx';
 import StartView from './components/StartView.jsx';
 import ResultView from './components/ResultView.jsx';
@@ -16,7 +16,8 @@ import SegmentsContext from './contexts/SegmentsContext.js';
 import GameScoreContext from './contexts/GameScoreContext.js';
 import GameRouteContext from './contexts/GameRouteContext.js';
 
-import { getStations, getSegments } from './api/api.js';
+import { getStations, getSegments, getLines } from './api/api.js';
+import LinesContext from './contexts/LineContext.js';
 
 function App() {
 
@@ -38,10 +39,12 @@ function App() {
                     <Routes>
                         <Route path='/' element={<Layout />}>
                             <Route index element={<HomeView />} />
-                            <Route path='game' element={<StartView />} />
-                            <Route path='planning' element={<PlanningView />} />
-                            <Route path='execute' element={<ExecutionView />} />
-                            <Route path='result' element={<ResultView />} />
+                            <Route path='game' element={<GameLayout/>}>
+                                <Route path='start' element={<StartView />} />
+                                <Route path='planning' element={<PlanningView />} />
+                                <Route path='execute' element={<ExecutionView />} />
+                                <Route path='result' element={<ResultView />} />
+                            </Route>
                             <Route path='rankings' element={<RankingsView name={user.name} surname={user.surname}/>} />
                             <Route path='login' element={<LoginForm updateUser={updateUser}/>} />
                             <Route path='logout' element={<Logout updateUser={updateUser}/>} />
@@ -56,9 +59,11 @@ function App() {
 function AppProvider({children}) {
     return (<StationsProvider>
         <SegmentsProvider>
-            <GameProvider>
-                {children}
-            </GameProvider>
+            <LinesProvider>
+                <GameProvider>
+                    {children}
+                </GameProvider>
+            </LinesProvider>
         </SegmentsProvider>
     </StationsProvider>);
 }
@@ -126,11 +131,42 @@ function SegmentsProvider({children}) {
     </SegmentsContext.Provider>);
 }
 
+function LinesProvider({children}) {
+    const user = useContext(UserContext);
+
+    const [lines, setLines] = useState([]);
+    const [errorLine, setError] = useState("");
+
+    useEffect(() => {
+        async function getLinesList() {
+            try {
+                if (!user.id) {
+                    setLines([]);
+                    return;
+                }
+                else {
+                    const list_lines = await getLines();
+                    setLines(list_lines);
+                    setError("");
+                }
+            }
+            catch(err) {
+                setError(err.message);
+            }
+        }
+        getLinesList();
+    }, [user.id]);
+
+    return (<LinesContext.Provider value={{lines, errorLine}}>
+        {children}
+    </LinesContext.Provider>);
+}
+
 function GameProvider({children}) {
     const [startStation, setStartStation] = useState(null);
     const [endStation, setEndStation] = useState(null);
-    const [selectedSegments, setSelectedSegments] = useState(new Set());
-    const [gameScore, setGameScore] = useState(20);
+    const [selectedSegments, setSelectedSegments] = useState(null);
+    const [gameScore, setGameScore] = useState(null);
     const [reasonScore, setReasonScore] = useState("");
     return (<GameScoreContext.Provider value={{gameScore, reasonScore, setGameScore, setReasonScore}}>
         <GameRouteContext.Provider value={{startStation, endStation, selectedSegments, setStartStation, setEndStation, setSelectedSegments}}>

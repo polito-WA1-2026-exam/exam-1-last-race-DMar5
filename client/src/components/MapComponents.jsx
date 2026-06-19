@@ -1,3 +1,5 @@
+import { ListGroup } from "react-bootstrap";
+
 function StationsView(props) {
     const stations = props.stations;
     const cellSize = props.cellSize;
@@ -39,4 +41,14 @@ function SegmentsView(props) {
     );
 }
 
-export { StationsView, SegmentsView }
+function LinesView(props) {
+    const lines = props.lines;
+    return (<ListGroup>
+        {lines.map(line => <ListGroup.Item key={line.id}>
+                {line.line_name}
+           </ListGroup.Item>
+        )}
+    </ListGroup>);
+}
+
+export { StationsView, SegmentsView, LinesView }

@@ -1,48 +1,71 @@
 
 function getStartEndStations(stations, segments) {
+    // Guard against empty arrays
+    if (!stations || stations.length === 0 || !segments || segments.length === 0) {
+        return [null, null];
+    }
+
     let startStation;
     let endStation;
 
-    const min_value = 1;
-    const max_value = stations.length;
+    const adjacency_map = createAdjacencyMap(segments);
 
-    const map_stations = createMapStations(segments);
+    let startStation_id;
 
-    // Get the id of start station
-    let startStation_id = getRandomIntInclusive(min_value, max_value);
-
-    // Arrays to search and save stations
-    let list_to_check = [startStation_id];
-    let list_invalid_stations = [startStation_id];
-    let list_adj_stations = [];
-    let count = 0;
-
-    while(count < 3) {
-        let tmp_to_check = [];
-        for (let station_id of list_to_check) {
-            list_adj_stations = map_stations.get(station_id);
-            for (let adj_id of list_adj_stations) {
-                if (!list_invalid_stations.includes(adj_id)) {
-                    list_invalid_stations.push(adj_id);
-                    tmp_to_check.push(...map_stations.get(adj_id));
-                }
-            }
-        }
-        if (tmp_to_check.length === 0)
-            break;
-        list_to_check = tmp_to_check;
-        count++;
+    let listValidEndStations = [];
+    
+    while (listValidEndStations.length === 0) {
+        // Get the id of start station
+        startStation_id = stations[getRandomIntInclusive(0, stations.length-1)].id;
+        listValidEndStations = getValidEndStations(startStation_id, adjacency_map);
     }
 
-    let endStation_id;
-    do {
-        endStation_id = getRandomIntInclusive(min_value, max_value);
-    } while (list_invalid_stations.includes(endStation_id));
-
+    let endStation_id = listValidEndStations[getRandomIntInclusive(0, listValidEndStations.length-1)];
+    
     startStation = stations.find(st => parseInt(st.id) === startStation_id);
     endStation = stations.find(st => parseInt(st.id) === endStation_id);
 
     return [startStation, endStation];
+}
+
+// Computes breadth-first search to get the distance of each station from the start station
+function getValidEndStations(startStation_id, adjacency_map) {
+    const distance_map = new Map();
+    
+    distance_map.set(startStation_id, 0);
+
+    // Helpful data structures
+    let list_to_check = [startStation_id];
+    let list_adj_stations = [];
+    let tmp_to_check = [];
+    let distance = 1;
+
+    // BFS logic
+    while (list_to_check.length !== 0) {
+        tmp_to_check = [];
+        for (let station_id of list_to_check) {
+            list_adj_stations = adjacency_map.get(station_id);
+            if (list_adj_stations) {
+                for (let adj_id of list_adj_stations) {
+                    if (!distance_map.has(adj_id)) {
+                        distance_map.set(adj_id, distance);
+                        tmp_to_check.push(adj_id);
+                    }
+                }
+            }
+        }
+        list_to_check = tmp_to_check;
+        distance++;
+    }
+    let listValidEndStations = [];
+
+    for (let elem of adjacency_map.keys()) {
+        if (distance_map.get(elem) >= 3) {
+            listValidEndStations.push(elem);
+        }
+    }
+
+    return listValidEndStations;
 }
 
 // Get a random integer between 1 and stations.length
@@ -56,7 +79,7 @@ function getRandomIntInclusive(min, max) {
 // where:
 // key = station id
 // value = list of adjacent station ids
-function createMapStations(segments) {
+function createAdjacencyMap(segments) {
     const map = new Map();
     for (let seg of segments) {
         let s1_id = parseInt(seg.s1_id);

@@ -36,7 +36,8 @@ function Event(id, title, description, gain) {
     this.gain = gain;
 }
 
-function Score(value, date) {
+function Score(id, value, date) {
+    this.id = id;
     this.value = value;
     this.date = date;
 }

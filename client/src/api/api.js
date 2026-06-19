@@ -6,7 +6,6 @@ async function getLines() {
 
         if (response.ok) {
             const list_lines = await response.json();
-            //const listLines = list_lines.map(l => new Line(l.id, l.line_name, l.line_colour));
             return list_lines;
         }
         else {
@@ -26,7 +25,6 @@ async function getStations() {
 
         if (response.ok) {
             const list_stations = await response.json();
-            //const listStations = list_stations.map(s => new Station(s.id, s.station_name, s.x, s.y));
             return list_stations;
         }
         else {
@@ -47,7 +45,6 @@ async function getSegments() {
 
         if (response.ok) {
             const list_segments = await response.json();
-            //const listSegments = list_segments.map(s => new Segment(s.id, s.station1_id, s.station2_id, s.x1, s.y1, s.x2, s.y2, s.lineID));
             return list_segments;
         }
         else {
@@ -68,7 +65,6 @@ async function getEvents() {
 
         if (response.ok) {
             const list_events = await response.json();
-            //const listEvents = list_events.map(e => new Event(e.id, e.title, e.description, e.gain));
             return list_events;
         }
         else {
@@ -89,7 +85,6 @@ async function getOrderedScores() {
 
         if (response.ok) {
             const list_scores = await response.json();
-            //const listOrderedScores = list_scores.map(s => new Score(s.value, s.date));
             return list_scores;
         }
         else {

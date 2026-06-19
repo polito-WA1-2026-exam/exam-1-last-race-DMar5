@@ -1,44 +1,33 @@
+import { useContext } from "react";
 import { Button } from "react-bootstrap"
 import { useNavigate } from "react-router"
-import { StationsView, SegmentsView } from "./MapComponents";
-import { useContext } from "react";
+
 import StationsContext from "../contexts/StationsContext";
 import SegmentsContext from "../contexts/SegmentsContext";
+import LinesContext from "../contexts/LineContext";
+import GameScoreContext from "../contexts/GameScoreContext";
+
+import { StationsView, SegmentsView, LinesView } from "./MapComponents";
 
 function StartView() {
-    const {stations, errorSt} = useContext(StationsContext);
-    const {segments, errorSeg} = useContext(SegmentsContext);
+    const {stations} = useContext(StationsContext);
+    const {segments} = useContext(SegmentsContext);
+    const {lines} = useContext(LinesContext);
 
     const navigate = useNavigate();
 
     const offsetX = 20;
     const offsetY = 20;
     const cellSize = 50;
-
-    // Error handling
-    if (errorSt) {
-        return (<div>{"Error with stations loading " + errorSt}</div>);
-    }
-
-    else if (errorSeg) {
-        return (<div>{"Error with segments loading " + errorSeg}</div>);
-    }
-
-    else if (stations.length === 0) {
-        return (<div>{"Error: stations list is empty"}</div>);
-    }
-
-    else if (segments.length === 0) {
-        return (<div>{"Error: segments list is empty"}</div>);
-    }
         
     return (
         <div>
+            <LinesView lines={lines}/>
             <svg width={700} height={600}>
                 <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
                 <SegmentsView segments={segments} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
             </svg>
-            <Button onClick={() => navigate('/planning')}> Play </Button>
+            <Button onClick={() => navigate('/game/planning')}> Play </Button>
         </div>
     );
     

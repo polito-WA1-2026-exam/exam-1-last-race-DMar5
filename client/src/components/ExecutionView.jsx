@@ -1,13 +1,14 @@
 import { useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { Card } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
 
 import GameRouteContext from "../contexts/GameRouteContext";
 import GameScoreContext from "../contexts/GameScoreContext";
 import StationsContext from "../contexts/StationsContext";
 import SegmentsContext from "../contexts/SegmentsContext";
+import LinesContext from "../contexts/LineContext";
 
-import { StationsView, SegmentsView } from "./MapComponents";
+import { StationsView, SegmentsView, LinesView } from "./MapComponents";
 
 import { validateRoute, generateListRandomEvents } from "../game/executionFunctions";
 import { getEvents } from "../api/api";
@@ -15,6 +16,7 @@ import { getEvents } from "../api/api";
 function ExecutionView() {
     const {stations} = useContext(StationsContext);
     const {segments} = useContext(SegmentsContext);
+    const {lines} = useContext(LinesContext);
     const {startStation, endStation, selectedSegments} = useContext(GameRouteContext);
     const {gameScore, setGameScore, setReasonScore} = useContext(GameScoreContext);
 
@@ -24,21 +26,26 @@ function ExecutionView() {
     // from a set of ids
     // to an array of segments
     const selectSegmentsArray = useMemo(() => {
+        if (!selectedSegments || segments.length === 0) return null;
         const newArray = [];
         for (let id of selectedSegments) {
             newArray.push(segments.find(seg => seg.id === id));
         }
         return newArray;
-    }, [selectedSegments, segments]);
+    }, [selectedSegments, segments.length]);
 
     // Check that the route is valid
     useEffect(() => {
-        if (selectSegmentsArray.length === 0 || !startStation || !endStation) return;
+        if (!startStation || !endStation || !selectSegmentsArray) return;
         const isValid = validateRoute(startStation, endStation, selectSegmentsArray);
         if (!isValid) {
             setGameScore(0);
             setReasonScore("Invalid route");
-            navigate('/result');
+            navigate('/game/result');
+        }
+        else {
+            setReasonScore("Valid route");
+            setGameScore(20);
         }
     }, [startStation, endStation, selectSegmentsArray]);
 
@@ -60,30 +67,32 @@ function ExecutionView() {
         getEventsList();
     }, []);
 
-    useEffect(() => {setListEventsId(generateListRandomEvents(selectedSegments.length))}, [selectedSegments]);
+    useEffect(() => {
+        if (!selectedSegments || events.length === 0) return;
+        setListEventsId(generateListRandomEvents(selectedSegments.size, events.length-1));
+    }, [selectedSegments, events.length]);
 
     // Index to render progressively segments and events
     const [index, setIndex] = useState(-1);
-    
-    useEffect(() => {
-        if (events.length === 0 || listEventsId.length === 0) return;
-        if (index >= selectedSegments.length) {
-            navigate('/result');
-        }
-        const timeout = setTimeout(() => {
-            changeIndexScore();
-        }, 2000);
-        return () => clearTimeout(timeout);
-    }, [index, selectedSegments, listEventsId]);
 
-    function changeIndexScore() {
-        setIndex((prev) => {
-            const newIndex = prev + 1;
-            const addScore = events[listEventsId[newIndex]].gain;
-            setGameScore(prev => prev + addScore);
-            return newIndex;
-        });
-    }
+    useEffect(() => {
+        if (index === - 1) {
+            const timeout = setTimeout(() => setIndex(prev => prev + 1), 2000);
+            return () => clearTimeout(timeout);
+        }
+        const timeout = setTimeout(() => setIndex(prev => prev + 1), 10000);
+        return () => clearTimeout(timeout);
+    }, [index]);
+
+    useEffect(() => {
+        if (index === -1 || events.length === 0 || listEventsId.length === 0) return;
+        if (index >= listEventsId.length) {
+            navigate('/game/result');
+            return;
+        }
+        const addScore = events[listEventsId[index]].gain;
+        setGameScore(prev => prev + addScore);
+    }, [index, events.length, listEventsId.length]);
 
     // Offsets for stations representation in the map
     const offsetX = 20;
@@ -97,11 +106,12 @@ function ExecutionView() {
 
     return (<>
         <p>{"Score: " + gameScore}</p>
+        <LinesView lines={lines}/>
         <svg width={700} height={600}>
             <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
             {(index !== -1) && <SegmentsView segments={selectSegmentsArray.slice(0,index+1)} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>}
         </svg>
-        {(index !== -1) && <EventView event={events[listEventsId[index]]} changeIndexScore={changeIndexScore}/>}
+        {(index >= 0 && index < listEventsId.length) && <EventView event={events[listEventsId[index]]} changeIndex={setIndex}/>}
     </>);
 }
 
@@ -113,7 +123,7 @@ function EventView(props) {
                 <Card.Title>{event.title}</Card.Title>
                 <Card.Subtitle>{"Gain: " + event.gain}</Card.Subtitle>
                 <Card.Text>{event.description}</Card.Text>
-                <Button onClick={() => props.changeIndexScore()}>Skip</Button>
+                <Button onClick={() => props.changeIndex(prev=>prev+1)}>Skip</Button>
             </Card.Body>
         </Card>
     </>);

@@ -11,53 +11,45 @@ import SegmentsContext from "../contexts/SegmentsContext";
 import GameRouteContext from "../contexts/GameRouteContext";
 
 function PlanningView() {
-    const {stations, errorSt} = useContext(StationsContext);
-    const {segments, errorSeg} = useContext(SegmentsContext);
+    const {stations} = useContext(StationsContext);
+    const {segments} = useContext(SegmentsContext);
 
     const navigate = useNavigate();
 
     // Context and state to handle selected segments
     const {selectedSegments, setSelectedSegments} = useContext(GameRouteContext);
 
+    // Get start and end stations
+    const {startStation, endStation, setStartStation, setEndStation} = useContext(GameRouteContext);
+    
+    useEffect(() => {
+        if (stations.length === 0 || segments.length === 0) {
+            return;
+        }
+        const [start, end] = getStartEndStations(stations, segments);
+        setSelectedSegments(new Set());
+        setStartStation(start);
+        setEndStation(end);
+    }, [stations.length, segments.length]);
+
     // Timer
     const [seconds, setSeconds] = useState(90);
 
     useEffect(() => {
         if (seconds < 0) {
-            navigate('/execute');
+            navigate('/game/execute');
+            return;
         }
         const timeout = setTimeout(() => setSeconds(prev => prev - 1), 1000);
         return () => clearTimeout(timeout);
     }, [seconds]);
-
-    // Get start and end stations
-    const {startStation, endStation, setStartStation, setEndStation} = useContext(GameRouteContext);
-    
-    useEffect(() => {
-        if (stations.length === 0 || segments.length === 0) return;
-        const [start, end] = getStartEndStations(stations, segments);
-        setStartStation(start);
-        setEndStation(end);
-    }, [stations, segments]);
 
     // Offsets for stations representation in the map
     const offsetX = 20;
     const offsetY = 20;
     const cellSize = 50;
 
-    // Error handling for stations and segments
-    if (errorSt) {
-        return (<div>{"Error with stations loading " + errorSt}</div>);
-    }
-    else if (stations.length === 0) {
-        return (<div>{"Error: stations list is empty"}</div>);
-    }
-    if (errorSeg) {
-        return (<div>{"Error with segments loading " + errorSeg}</div>);
-    }
-    else if (segments.length === 0) {
-        return (<div>{"Error: segments list is empty"}</div>);
-    }
+    // Error handling for start and end stations
     if (!startStation || !endStation) {
         return <div>Loading start and end stations...</div>
     }
@@ -84,12 +76,13 @@ function SegmentsList(props) {
 
     // For faster lookup to get the station name
     const stationsMap = useMemo(() => {
+        if (stations.length === 0) return new Map();
         const myMap = new Map();
         for (let st of stations) {
             myMap.set(st.id, st.station_name);
         }
         return myMap;
-    }, [stations]);
+    }, [stations.length]);
 
     // Button click handlers
     function handleSelect(id) {

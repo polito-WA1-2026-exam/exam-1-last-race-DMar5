@@ -106,7 +106,7 @@ export const listScores = (userId) => {
             if(err)
                 reject(err);
             else {
-                const scores = rows.map(r => new Score(r.value, r.date));
+                const scores = rows.map(r => new Score(r.id, r.value, r.date));
                 resolve(scores);
             }
         });

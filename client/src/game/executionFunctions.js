@@ -1,6 +1,10 @@
 function validateRoute(startStation, endStation, selectedSegments) {
     let prev_id;
 
+    if (selectedSegments.length === 0) {
+        return false;
+    }
+ 
     if (selectedSegments[0].s1_id === startStation.id) {
         prev_id = selectedSegments[0].s2_id;
     }
@@ -30,11 +34,11 @@ function validateRoute(startStation, endStation, selectedSegments) {
     return true;
 }
 
-function generateListRandomEvents(selectedSegmentsLength) {
+function generateListRandomEvents(selectedSegmentsLength, max_index=8) {
     const eventsList = [];
 
     for (let i = 0; i < selectedSegmentsLength; i++) {
-        eventsList.push(getRandomIntInclusive(0,8));
+        eventsList.push(getRandomIntInclusive(0,max_index));
     }
 
     return eventsList;
