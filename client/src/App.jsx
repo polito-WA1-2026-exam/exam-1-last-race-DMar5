@@ -1,3 +1,5 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { useContext, useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap';
 import { Route, Routes, useNavigate } from 'react-router';
@@ -38,7 +40,7 @@ function App() {
     return (
         <UserContext.Provider value={user}>
             <AppProvider>
-                <Container>
+                <Container fluid>
                     <Routes>
                         <Route path='/' element={<Layout />}>
                             <Route index element={<HomeView />} />

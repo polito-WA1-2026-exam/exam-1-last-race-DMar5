@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Button } from "react-bootstrap"
+import { Button, Card } from "react-bootstrap"
 import { useNavigate } from "react-router"
 
 import StationsContext from "../contexts/StationsContext";
@@ -18,24 +18,31 @@ function StartView() {
 
     const navigate = useNavigate();
 
-    const offsetX = 20;
-    const offsetY = 20;
-    const cellSize = 50;
+    const offsetX = 25;
+    const offsetY = 25;
+    const cellSize = 60;
 
     function handleStart() {
         setIsPlaying(true);
         navigate('/game/planning')
     }
         
-    return (
-        <div>
-            <LinesView lines={lines}/>
-            <svg width={700} height={600}>
-                <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
-                <SegmentsView segments={segments} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
-            </svg>
-            <Button onClick={() => handleStart()}> Play </Button>
+    return ( <>
+        <div className="d-flex mt-1 justify-content-center">
+            <div className="p-3 d-flex gap-4 align-items-start" style={{ maxWidth: "1200px", width: "100%" }}>
+                <Card className="bg-light shadow-sm" style={{ width: "220px" }}>
+                    <LinesView lines={lines}/>
+                </Card>
+                <svg width={750} height={640} className="border border-dark-subtle rounded">
+                    <SegmentsView segments={segments} lines={lines} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
+                    <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
+                </svg>
+            </div>
         </div>
+        <div className="d-flex justify-content-center mb-3">
+            <Button className="fw-semibold" variant="success" onClick={() => handleStart()}> Play </Button>
+        </div>
+    </>
     );
     
 }

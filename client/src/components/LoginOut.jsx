@@ -29,24 +29,24 @@ function LoginForm(props) {
         }
     } 
 
-    return <Container onSubmit={doSubmit}>
-        <Form>
-            <Form.Group className="mb-3" controlId="formBasicUsername">
-                <Form.Label>Username</Form.Label>
+    return <div className="d-flex justify-content-center min-vh-100">
+        <Form className="w-25" onSubmit={doSubmit}>
+            <Form.Group className="mb-3" controlId="formUsername">
+                <Form.Label className="fw-semibold">Username</Form.Label>
                 <Form.Control type="text" placeholder="Enter username" value={username} onChange={(ev) => setUsername(ev.target.value)}/>
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
+            <Form.Group className="mb-3" controlId="formPassword">
+                <Form.Label className="fw-semibold">Password</Form.Label>
                 <Form.Control type="password" placeholder="Password" value={password} onChange={(ev) => setPassword(ev.target.value)}/>
             </Form.Group>
 
-            <Button variant="primary" type="submit">
+            <Button className="mt-2 w-100 fw-semibold" variant="info" type="submit">
                 Submit
             </Button>
             {errormsg && <div className="text-danger">{errormsg}</div>}
         </Form>
-    </Container>;
+    </div>;
 }
 
 function Logout(props) {
@@ -65,7 +65,7 @@ function Logout(props) {
                 }
             }
             catch(err) {
-                result = err.message;
+                setResult(err.message);
             }
         }
         tryLogout();

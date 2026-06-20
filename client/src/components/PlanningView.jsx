@@ -52,30 +52,38 @@ function PlanningView() {
     // Offsets for stations representation in the map
     const offsetX = 20;
     const offsetY = 20;
-    const cellSize = 50;
+    const cellSize = 60;
 
     // Error handling for start and end stations
     if (!startStation || !endStation) {
         return <div>Loading start and end stations...</div>
     }
 
-    return ( <>
-        <p>{"Time left: " + seconds + "s"}</p>
-        <p>{"Start station: " + startStation.station_name}</p>
-        <p>{"End station: " + endStation.station_name}</p>
-        <svg width={700} height={600}>
+    return ( <div className="d-flex flex-column align-items-center mt-4 gap-3">
+        <p className={`fw-bold fs-4 ${seconds <= 10 ? "text-danger" : "text-info"}`}>{"Time left: " + seconds + "s"}</p>
+        <p className="fs-5 text-dark">
+            Start station: <span className="text-info">{startStation.station_name}</span>
+        </p>
+        <p className="fs-5 text-dark">
+            End station: <span className="text-info">{endStation.station_name}</span>
+        </p>
+        <svg width={750} height={640} className="border border-2 border-dark-subtle rounded shadow-sm">
             <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
         </svg>
-        <Button onClick={() => {
-            endGame();
-            navigate('/game/start');
-        }}>End game</Button>
+        <div className="d-flex gap-3 mt-3">
+            <Button variant="danger" onClick={() => {
+                endGame();
+                navigate('/game/start');
+            }}>End game</Button>
+            <Button variant="success" onClick={() => setSeconds(-1)}>Submit</Button>
+        </div>
+        
         <SegmentsList segments={segments} 
                       stations={stations} 
                       selectedSegments={selectedSegments}
                       setSelectedSegments={setSelectedSegments}/>
-        <Button onClick={() => setSeconds(-1)}>Submit</Button>
-    </>);
+        
+    </div>);
 }
 
 function SegmentsList(props) {
@@ -115,13 +123,27 @@ function SegmentsList(props) {
     <p>List of segments</p>
     <ListGroup>
         {segments.map(seg => {
-            return <ListGroup.Item key={"Segment " + seg.id}>
-                <Card>
-                    <Card.Body>
-                        <Card.Title>{"Segment " + seg.id}</Card.Title>
-                        <Card.Text>{stationsMap.get(seg.s1_id) + " --- " + stationsMap.get(seg.s2_id)}</Card.Text>
-                        <Button disabled={selectedSegments.has(seg.id)} onClick={() => handleSelect(seg.id)}>Select</Button>
-                        <Button disabled={!selectedSegments.has(seg.id)} onClick={() => handleDeselect(seg.id)}>Deselect</Button>
+            return <ListGroup.Item key={"Segment " + seg.id} className={selectedSegments.has(seg.id)
+                        ? "border border-info border-2 bg-info bg-opacity-10"
+                        : ""}>
+                <Card className="shadow-sm">
+                    <Card.Body className="d-flex justify-content-between align-items-center">
+                        <div>
+                            <Card.Title className="mb-1">{"Segment " + seg.id}</Card.Title>
+                            <Card.Text className="text-muted">{stationsMap.get(seg.s1_id) + " --- " + stationsMap.get(seg.s2_id)}</Card.Text>
+                        </div>
+                        <div>
+                            <Button size="sm"
+                                    variant="info"
+                                    disabled={selectedSegments.has(seg.id)} 
+                                    onClick={() => handleSelect(seg.id)}>Select
+                            </Button>
+                            <Button size="sm"
+                                    variant="secondary"
+                                    disabled={!selectedSegments.has(seg.id)} 
+                                    onClick={() => handleDeselect(seg.id)}>Deselect
+                            </Button>
+                        </div>
                     </Card.Body>
                 </Card>
             </ListGroup.Item>
@@ -135,10 +157,10 @@ function SelectedSegmentsList(props) {
 
     return (<>
         <p>Selected segments</p>
-        <ListGroup horizontal>
+        <ListGroup horizontal className="mt-2">
             {[...selectedSegments].map(segId => {
-                return <ListGroup.Item key={"Selected segment " + segId}>
-                    <Badge>{segId}</Badge>
+                return <ListGroup.Item key={"Selected segment " + segId} className="border-0 p-0">
+                    <Badge bg="info" className="fs-6 text-dark mx-1 my-1 px-3 py-2">{segId}</Badge>
                 </ListGroup.Item>
             })}
         </ListGroup>

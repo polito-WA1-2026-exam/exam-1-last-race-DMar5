@@ -103,6 +103,7 @@ function ExecutionView() {
             setStartStation(null);
             setEndStation(null);
             setSelectedSegments(null);
+            setIsPlaying(false);
             navigate('/game/result');
             return;
         }
@@ -113,7 +114,7 @@ function ExecutionView() {
     // Offsets for stations representation in the map
     const offsetX = 20;
     const offsetY = 20;
-    const cellSize = 50;
+    const cellSize = 60;
     
     if (errorEv) {
         endGame();
@@ -123,33 +124,49 @@ function ExecutionView() {
         return <div>Loading events...</div>
     }
 
-    return (<>
-        <p>{"Score: " + gameScore}</p>
-        <LinesView lines={lines}/>
-        <svg width={700} height={600}>
-            <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
-            {(selectSegmentsArray && index !== -1) && <SegmentsView segments={selectSegmentsArray.slice(0,index+1)} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>}
-        </svg>
-        <Button onClick={() => {
-            endGame();
-            navigate('/game/start');
-        }}>End game</Button>
-        {(index >= 0 && index < listEventsId.length) && <EventView event={events[listEventsId[index]]} changeIndex={setIndex}/>}
-    </>);
+    return (<div className="container-fluid mt-4 px-3">
+        <div className="row">
+            <div className="col-9 d-flex flex-column align-items-start gap-3">
+                <h3 className="text-info fw-bold">{"Score: " + gameScore}</h3>
+                <div className="row w-100">
+                    <div className="col-3">
+                        <Card className="bg-light shadow-sm w-100">
+                            <LinesView lines={lines}/>
+                        </Card>
+                    </div>
+                    <div className="col-9">
+                        <svg width={750} height={640} className="border border-2 border-dark-subtle rounded shadow-sm">
+                            {(selectSegmentsArray && index !== -1) && <SegmentsView segments={selectSegmentsArray.slice(0,index+1)} lines={lines} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>}
+                            <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <Button variant="danger" onClick={() => {
+                    endGame();
+                    navigate('/game/start');
+                }}>End game</Button>
+            </div>
+
+            <div className="col-3 d-flex justify-content-center align-items-center mt-4">
+                {(index >= 0 && index < listEventsId.length) && <EventView event={events[listEventsId[index]]} changeIndex={setIndex}/>}
+            </div>
+        </div>
+    </div>);
 }
 
 function EventView(props) {
     const event = props.event;
-    return (<>
-        <Card>
+    return (
+        <Card className="shadow-sm border border-info">
             <Card.Body>
-                <Card.Title>{event.title}</Card.Title>
-                <Card.Subtitle>{"Gain: " + event.gain}</Card.Subtitle>
+                <Card.Title className="text-info fw-bold">{event.title}</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">{"Gain: " + event.gain}</Card.Subtitle>
                 <Card.Text>{event.description}</Card.Text>
-                <Button onClick={() => props.changeIndex(prev=>prev+1)}>Skip</Button>
+                <Button variant="secondary" onClick={() => props.changeIndex(prev=>prev+1)}>Skip</Button>
             </Card.Body>
         </Card>
-    </>);
+    );
 }
 
 export default ExecutionView

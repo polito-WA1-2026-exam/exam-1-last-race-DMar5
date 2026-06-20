@@ -45,18 +45,15 @@ function ResultView() {
     }, [currScore]);
 
     if (errorScore) {
-        return <div>{errorScore}</div>;
-    }
-    if (!saved && gameScore === null) {
-        return <div>Loading score...</div>;
+        return <div className="text-danger">{errorScore}</div>;
     }
 
-    return (<>
-        <h1>Score</h1>
-        {reasonScore && <div>{reasonScore}</div>}
-        <div>{currScore}</div>
-        <Button onClick={() => navigate('/game/start')}>Play again</Button>
-    </>);
+    return (<div className="d-flex flex-column align-items-center mt-5">
+        <h1 className="fw-bold text-info display-3 mb-3">Final score</h1>
+        {reasonScore && <p className="text-muted fs-5 mb-2">{reasonScore}</p>}
+        <div className="display-1 fw-bold text-info mb-4">{currScore}</div>
+        <Button className="fw-semibold" variant="success" onClick={() => navigate('/game/start')}>Play again</Button>
+    </div>);
 }
 
 export default ResultView

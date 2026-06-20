@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { ListGroup, Badge } from 'react-bootstrap';
+import { ListGroup, Badge, Card } from 'react-bootstrap';
 
 import { getOrderedScores } from '../api/api';
 
@@ -13,7 +13,7 @@ function RankingsView(props) {
         async function getUserScores() {
             try {
                 const [orderedScores, message] = await getOrderedScores();
-                if ("OK") {
+                if (!message) {
                     setScores(orderedScores);
                 }
                 else {
@@ -27,10 +27,12 @@ function RankingsView(props) {
         getUserScores();
     }, []);
 
-    return <>
-        <h1> { "Scores of " + props.name + " " + props.surname } </h1>
-        { errormsg ? <div>{errormsg}</div> : <ScoresView scores={scores}/> }
-    </>;
+    return <div className="d-flex justify-content-center mt-4">
+        <Card className="p-4 shadow-sm" style={{ width: "600px" }}>
+            <h3 className="text-center mb-3 text-info fw-bold"> { "Scores of " + props.name + " " + props.surname } </h3>
+            { errormsg ? <div className="text-danger text-center">{errormsg}</div> : <ScoresView scores={scores}/> }
+        </Card>
+    </div>;
 }
 
 function ScoresView(props) {
@@ -38,16 +40,22 @@ function ScoresView(props) {
     const listScores = props.scores; 
 
     if (!listScores) {
-        result = <div>ERROR: listScores is not available</div>
+        result = <div className="text-danger">ERROR: listScores is not available</div>
     }
     else if (listScores.length === 0) {
-        result = <div>No scores yet</div>;
+        result = <div className="text-muted text-center">No scores yet</div>;
     }
     else {
         result = <ListGroup>{
-                listScores.map((score) => <ListGroup.Item key={"Score " + score.id}>
-                    {score.value + "       "}
-                    <Badge>{score.date}</Badge>
+                listScores.map((score, index) => 
+                <ListGroup.Item key={"Score " + score.id} 
+                                variant={index === 0 ? "info" : undefined}
+                                className={
+                                    "d-flex justify-content-between align-items-center" +
+                                    (index === 0 ? "bg-opacity-25 border-info border-3" : "")
+                                }>
+                    <span className="fw-bold fs-4">{score.value}</span>
+                    <Badge bg="info" className="text-dark fs-6">{score.date}</Badge>
                 </ListGroup.Item>)
             }</ListGroup>;
     }
