@@ -26,8 +26,15 @@ function ResultView() {
     useEffect(() => {
         if (currScore === null) return;
         async function storeScore(score) {
-            try { 
-                saved.current = await saveScore(score);;
+            try {
+                const result = await saveScore(score);
+                if (result === "OK") {
+                    saved.current = true;
+                }
+                else {
+                    setErrorScore(result);
+                }
+                
             }
             catch(err) {
                 setErrorScore(err.message);
@@ -37,11 +44,11 @@ function ResultView() {
             storeScore(currScore);
     }, [currScore]);
 
-    if (!saved && gameScore === null) {
-        return <div>Loading score...</div>;
-    }
     if (errorScore) {
         return <div>{errorScore}</div>;
+    }
+    if (!saved && gameScore === null) {
+        return <div>Loading score...</div>;
     }
 
     return (<>

@@ -11,14 +11,13 @@ async function doLogin(username, password) {
         });
         if (response.ok) {
             const user = await response.json();
-            return user;
+            return [user, null];
         }
         else {
-            throw new Error("Login failed");
+            return [null, "Login failed: " + response.status + " " + response.statusText];
         }
     }
     catch(err) {
-        if (err.message.startsWith("Login failed")) throw err;
         throw new Error("Network error", {cause:err});
     }
 }
@@ -30,26 +29,10 @@ async function doLogout() {
             credentials: "include"
         });
         if (response.ok) {
-            return true;
+            return "OK";
         }
         else {
-            throw new Error("Logout failed");
-        }
-    }
-    catch(err) {
-        if (err.message.startsWith("Logout failed")) throw err;
-        throw new Error("Network error", {cause:err});
-    }
-}
-
-async function checkSession() {
-    try {
-        const response = await fetch("http://localhost:3001/api/sessions/current", { credentials: "include" });
-        if (response.ok) {
-            return await response.json();
-        }
-        else {
-            return null;
+            return "Logout failed: " + response.status + " " + response.statusText;
         }
     }
     catch(err) {
@@ -57,4 +40,4 @@ async function checkSession() {
     }
 }
 
-export { doLogin, doLogout, checkSession }
+export { doLogin, doLogout }

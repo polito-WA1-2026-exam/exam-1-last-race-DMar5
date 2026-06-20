@@ -10,9 +10,13 @@ import StationsContext from "../contexts/StationsContext";
 import SegmentsContext from "../contexts/SegmentsContext";
 import GameRouteContext from "../contexts/GameRouteContext";
 
+import useEndGame from "./EndGameHook";
+
 function PlanningView() {
     const {stations} = useContext(StationsContext);
     const {segments} = useContext(SegmentsContext);
+
+    const endGame = useEndGame();
 
     const navigate = useNavigate();
 
@@ -27,6 +31,7 @@ function PlanningView() {
             return;
         }
         const [start, end] = getStartEndStations(stations, segments);
+        // Set initial game context
         setSelectedSegments(new Set());
         setStartStation(start);
         setEndStation(end);
@@ -61,6 +66,10 @@ function PlanningView() {
         <svg width={700} height={600}>
             <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
         </svg>
+        <Button onClick={() => {
+            endGame();
+            navigate('/game/start');
+        }}>End game</Button>
         <SegmentsList segments={segments} 
                       stations={stations} 
                       selectedSegments={selectedSegments}

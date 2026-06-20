@@ -101,12 +101,12 @@ export const listEvents = () => {
 // Retrieves the list of score for the authenticated user
 export const listScores = (userId) => {
     return new Promise((resolve, reject) => {
-        const sql = "SELECT value, date FROM scores WHERE gamerID = ? ORDER BY value DESC";
+        const sql = "SELECT * FROM scores WHERE gamerID = ? ORDER BY value DESC";
         db.all(sql, [userId], function(err, rows) {
             if(err)
                 reject(err);
             else {
-                const scores = rows.map(r => new Score(r.id, r.value, r.date));
+                const scores = rows.map(r => new Score(r.scoreID, r.value, r.date));
                 resolve(scores);
             }
         });

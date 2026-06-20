@@ -13,11 +13,12 @@ import ExecutionView from './components/ExecutionView.jsx';
 import UserContext from './contexts/UserContext.js';
 import StationsContext from './contexts/StationsContext.js';
 import SegmentsContext from './contexts/SegmentsContext.js';
+import LinesContext from './contexts/LineContext.js';
 import GameScoreContext from './contexts/GameScoreContext.js';
 import GameRouteContext from './contexts/GameRouteContext.js';
+import GameStatusContext from './contexts/GameStatusContext.js';
 
 import { getStations, getSegments, getLines } from './api/api.js';
-import LinesContext from './contexts/LineContext.js';
 
 function App() {
 
@@ -29,7 +30,9 @@ function App() {
 
     const updateUser = (newUser) => {
         setUser({id: newUser.id, name: newUser.name, surname: newUser.surname, email: newUser.email});
-        navigate('/');
+        if (newUser.id !== undefined) {
+            navigate('/');
+        }
     }
 
     return (
@@ -82,9 +85,15 @@ function StationsProvider({children}) {
                     return;
                 }
                 else {
-                    const list_stations = await getStations();
-                    setStations(list_stations);
+                    const [list_stations, message] = await getStations();
+                    if (message) {
+                        setStations([]);
+                        setError(message);
+                    }
+                    else {
+                        setStations(list_stations);
                     setError("");
+                    }
                 }
             }
             catch(err) {
@@ -114,9 +123,15 @@ function SegmentsProvider({children}) {
                     return;
                 }
                 else {
-                    const list_segments = await getSegments();
-                    setSegments(list_segments);
-                    setError("");
+                    const [list_segments, message] = await getSegments();
+                    if (message) {
+                        setSegments([]);
+                        setError(message);
+                    }
+                    else {
+                        setSegments(list_segments);
+                        setError("");
+                    }
                 }
             }
             catch(err) {
@@ -145,9 +160,15 @@ function LinesProvider({children}) {
                     return;
                 }
                 else {
-                    const list_lines = await getLines();
-                    setLines(list_lines);
-                    setError("");
+                    const [list_lines, message] = await getLines();
+                    if (message) {
+                        setLines([]);
+                        setError(message);
+                    }
+                    else {
+                        setLines(list_lines);
+                        setError("");
+                    }
                 }
             }
             catch(err) {
@@ -168,9 +189,12 @@ function GameProvider({children}) {
     const [selectedSegments, setSelectedSegments] = useState(null);
     const [gameScore, setGameScore] = useState(null);
     const [reasonScore, setReasonScore] = useState("");
+    const [isPlaying, setIsPlaying] = useState(false);
     return (<GameScoreContext.Provider value={{gameScore, reasonScore, setGameScore, setReasonScore}}>
         <GameRouteContext.Provider value={{startStation, endStation, selectedSegments, setStartStation, setEndStation, setSelectedSegments}}>
-            {children}
+            <GameStatusContext.Provider value={{isPlaying, setIsPlaying}}>
+                {children}
+            </GameStatusContext.Provider>
         </GameRouteContext.Provider>
     </GameScoreContext.Provider>);
 }

@@ -6,15 +6,14 @@ async function getLines() {
 
         if (response.ok) {
             const list_lines = await response.json();
-            return list_lines;
+            return [list_lines, null];
         }
         else {
-            throw new Error("HTTP error in getLines, code = " + response.status 
-                            + " text = " + response.statusText);
+            return [null, "HTTP error in getLines, code = " + response.status 
+                            + " text = " + response.statusText];
         }
     }
     catch(err) {
-        if (err.message.startsWith("HTTP error")) throw err;
         throw new Error("Network error", {cause : err});
     }
 }
@@ -25,15 +24,14 @@ async function getStations() {
 
         if (response.ok) {
             const list_stations = await response.json();
-            return list_stations;
+            return [list_stations, null];
         }
         else {
-            throw new Error("HTTP error in getStations, code = " + response.status 
-                            + " text = " + response.statusText);
+            return [null, "HTTP error in getStations, code = " + response.status 
+                            + " text = " + response.statusText];
         }
     }
     catch(err) {
-        if (err.message.startsWith("HTTP error")) throw err;
         throw new Error("Network error", {cause : err});
     }
 
@@ -45,15 +43,14 @@ async function getSegments() {
 
         if (response.ok) {
             const list_segments = await response.json();
-            return list_segments;
+            return [list_segments, null];
         }
         else {
-            throw new Error("HTTP error in getSegments, code = " + response.status 
-                            + " text = " + response.statusText);
+            return [null, "HTTP error in getSegments, code = " + response.status 
+                            + " text = " + response.statusText];
         }
     }
     catch(err) {
-        if (err.message.startsWith("HTTP error")) throw err;
         throw new Error("Network error", {cause : err});
     }
 
@@ -65,15 +62,14 @@ async function getEvents() {
 
         if (response.ok) {
             const list_events = await response.json();
-            return list_events;
+            return [list_events, null];
         }
         else {
-            throw new Error("HTTP error in getEvents, code = " + response.status 
-                            + " text = " + response.statusText);
+            return [null, "HTTP error in getEvents, code = " + response.status 
+                            + " text = " + response.statusText];
         }
     }
     catch(err) {
-        if (err.message.startsWith("HTTP error")) throw err;
         throw new Error("Network error", {cause : err});
     }
 
@@ -85,15 +81,14 @@ async function getOrderedScores() {
 
         if (response.ok) {
             const list_scores = await response.json();
-            return list_scores;
+            return [list_scores, null];
         }
         else {
-            throw new Error("HTTP error in getOrderedScores, code = " + response.status 
-                            + " text = " + response.statusText);
+            return [null, "HTTP error in getOrderedScores, code = " + response.status 
+                            + " text = " + response.statusText];
         }
     }
     catch(err) {
-        if (err.message.startsWith("HTTP error")) throw err;
         throw new Error("Network error", {cause : err});
     }
 
@@ -113,15 +108,14 @@ async function saveScore(newScore) {
         );
 
         if (response.ok) {
-            return true;
+            return "OK";
         }
         else {
-            throw new Error("HTTP error in saveScore, code = " + response.status 
-                            + " text = " + response.statusText);
+            return "HTTP error in saveScore, code = " + response.status 
+                            + " text = " + response.statusText;
         }
     }
     catch(err) {
-        if (err.message.startsWith("HTTP error")) throw err;
         throw new Error("Network error", {cause : err});
     }
 }

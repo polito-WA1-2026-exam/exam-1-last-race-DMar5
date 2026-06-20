@@ -6,6 +6,7 @@ import UserContext from '../contexts/UserContext.js';
 import StationsContext from "../contexts/StationsContext";
 import SegmentsContext from "../contexts/SegmentsContext";
 import LinesContext from "../contexts/LineContext.js";
+import GameStatusContext from "../contexts/GameStatusContext.js";
 
 {/* Style better the layout */}
 
@@ -58,14 +59,15 @@ function GameLayout() {
 function Header() {
 
     const user = useContext(UserContext);
+    const {isPlaying} = useContext(GameStatusContext);
 
     return (
         <Navbar>
             <Container>
                 <Navbar.Brand>Last Race</Navbar.Brand>
                     <Nav>
-                        <Nav.Link as={Link} to='/'>Home</Nav.Link>
-                        { user.id ? <AuthenticatedUser name={user.name} surname={user.surname}/> : <UnauthenticatedUser/>}
+                        { isPlaying ? <Nav.Link disabled>Home</Nav.Link> : <Nav.Link as={Link} to='/'>Home</Nav.Link>}
+                        { user.id ? <AuthenticatedUser name={user.name} surname={user.surname} isPlaying={isPlaying}/> : <UnauthenticatedUser/>}
                     </Nav>
             </Container>
         </Navbar>
@@ -73,10 +75,11 @@ function Header() {
 }
 
 function AuthenticatedUser(props) {
+    const isPlaying = props.isPlaying;
     return <>
-        <Nav.Link as={Link} to='/game/start'>Game</Nav.Link>
-        <Nav.Link as={Link} to='/rankings'>Rankings</Nav.Link>
-        <Button as={Link} to='/logout'>Logout</Button>
+        {isPlaying ? <Nav.Link disabled>Game</Nav.Link> : <Nav.Link as={Link} to='/game/start'>Game</Nav.Link>}
+        {isPlaying ? <Nav.Link disabled>Rankings</Nav.Link> : <Nav.Link as={Link} to='/rankings'>Rankings</Nav.Link>}
+        <Button disabled={isPlaying} as={Link} to='/logout'>Logout</Button>
         <Navbar.Text> {"Logged in as " + props.name +" " + props.surname} </Navbar.Text>
     </>;
 }

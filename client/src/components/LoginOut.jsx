@@ -16,8 +16,13 @@ function LoginForm(props) {
                 setErrormsg("Please, fill in all the fields.");
                 return;
             }
-            const user = await doLogin(username, password);
-            props.updateUser(user);
+            const [user, message] = await doLogin(username, password);
+            if (user === null) {
+                setErrormsg(message);
+            }
+            else if (message === null) {
+                props.updateUser(user);
+            }
         }
         catch(err) {
             setErrormsg(err.message);
@@ -46,11 +51,24 @@ function LoginForm(props) {
 
 function Logout(props) {
 
-    let result = "Logout completed";
+    const [result, setResult] = useState("Logout completed");
 
     useEffect(()=>{
-        doLogout().then(props.updateUser({id: undefined, name: undefined, surname: undefined, email: undefined}))
-                  .catch((err)=> result = err.message);
+        async function tryLogout() {
+            try {
+                const logout = await doLogout();
+                if (logout === "OK") {
+                    props.updateUser({id: undefined, name: undefined, surname: undefined, email: undefined})
+                }
+                else {
+                    setResult(logout);
+                }
+            }
+            catch(err) {
+                result = err.message;
+            }
+        }
+        tryLogout();
     }, []);
 
     return <h1>{result}</h1>;

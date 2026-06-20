@@ -4,6 +4,7 @@ import { Card, Button } from "react-bootstrap";
 
 import GameRouteContext from "../contexts/GameRouteContext";
 import GameScoreContext from "../contexts/GameScoreContext";
+import GameStatusContext from "../contexts/GameStatusContext";
 import StationsContext from "../contexts/StationsContext";
 import SegmentsContext from "../contexts/SegmentsContext";
 import LinesContext from "../contexts/LineContext";
@@ -13,12 +14,17 @@ import { StationsView, SegmentsView, LinesView } from "./MapComponents";
 import { validateRoute, generateListRandomEvents } from "../game/executionFunctions";
 import { getEvents } from "../api/api";
 
+import useEndGame from "./EndGameHook";
+
 function ExecutionView() {
     const {stations} = useContext(StationsContext);
     const {segments} = useContext(SegmentsContext);
     const {lines} = useContext(LinesContext);
-    const {startStation, endStation, selectedSegments} = useContext(GameRouteContext);
+    const {startStation, endStation, selectedSegments, setStartStation, setEndStation, setSelectedSegments} = useContext(GameRouteContext);
     const {gameScore, setGameScore, setReasonScore} = useContext(GameScoreContext);
+    const {isPlaying, setIsPlaying} = useContext(GameStatusContext);
+
+    const endGame = useEndGame();
 
     const navigate = useNavigate();
 
@@ -41,6 +47,7 @@ function ExecutionView() {
         if (!isValid) {
             setGameScore(0);
             setReasonScore("Invalid route");
+            setIsPlaying(false);
             navigate('/game/result');
         }
         else {
@@ -57,8 +64,13 @@ function ExecutionView() {
     useEffect(() => {
         async function getEventsList() {
             try {
-                const events = await getEvents();
-                setEvents(events);
+                const [events, message] = await getEvents();
+                if (message) {
+                    setErrorEv(message);
+                }
+                else {
+                    setEvents(events);
+                }
             }
             catch(err) {
                 setErrorEv(err.message);
@@ -87,6 +99,10 @@ function ExecutionView() {
     useEffect(() => {
         if (index === -1 || events.length === 0 || listEventsId.length === 0) return;
         if (index >= listEventsId.length) {
+            // Reset game context to null for new game
+            setStartStation(null);
+            setEndStation(null);
+            setSelectedSegments(null);
             navigate('/game/result');
             return;
         }
@@ -99,7 +115,10 @@ function ExecutionView() {
     const offsetY = 20;
     const cellSize = 50;
     
-    if (errorEv) return <div>{errorEv}</div>
+    if (errorEv) {
+        endGame();
+        return(<div>{errorEv}</div>);
+    }
     if (events.length === 0) {
         return <div>Loading events...</div>
     }
@@ -109,8 +128,12 @@ function ExecutionView() {
         <LinesView lines={lines}/>
         <svg width={700} height={600}>
             <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
-            {(index !== -1) && <SegmentsView segments={selectSegmentsArray.slice(0,index+1)} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>}
+            {(selectSegmentsArray && index !== -1) && <SegmentsView segments={selectSegmentsArray.slice(0,index+1)} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>}
         </svg>
+        <Button onClick={() => {
+            endGame();
+            navigate('/game/start');
+        }}>End game</Button>
         {(index >= 0 && index < listEventsId.length) && <EventView event={events[listEventsId[index]]} changeIndex={setIndex}/>}
     </>);
 }

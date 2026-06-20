@@ -10,8 +10,21 @@ function RankingsView(props) {
     const [errormsg, setErrormsg] = useState("");
 
     useEffect(() => {
-        getOrderedScores().then((orderedScores) => setScores(orderedScores))
-                        .catch((err) => setErrormsg(err.message))
+        async function getUserScores() {
+            try {
+                const [orderedScores, message] = await getOrderedScores();
+                if ("OK") {
+                    setScores(orderedScores);
+                }
+                else {
+                    setErrormsg(message);
+                }
+            }
+            catch(err) {
+                setErrormsg(err.message);
+            }
+        }
+        getUserScores();
     }, []);
 
     return <>
@@ -32,7 +45,7 @@ function ScoresView(props) {
     }
     else {
         result = <ListGroup>{
-                listScores.map((score) => <ListGroup.Item key={score.id}>
+                listScores.map((score) => <ListGroup.Item key={"Score " + score.id}>
                     {score.value + "       "}
                     <Badge>{score.date}</Badge>
                 </ListGroup.Item>)
