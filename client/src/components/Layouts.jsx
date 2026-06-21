@@ -19,7 +19,32 @@ function Layout() {
 
 function HomeView() {
     {/* To make better */}
-    return <h1>Welcome to Last Race!</h1>;
+    return (<div className="justify-content-center ms-4 me-4 mt-4">
+        <h2 className="text-center mb-4 text-info fw-bold">Welcome to Last Race!</h2>
+
+        <h5 className="fw-bold text-secondary">Objectives</h5>
+        <p>
+            Your goal is to build a valid route from the start station to the end station that will be assigned to you.
+        </p>
+        <p>
+            Before starting the game, look carefully at the network map. Try  to memorize as much as you can. Once you’re ready, press the play button to start the game.
+        </p>
+        <p>
+            Scroll through the list of segments and select them in order. You have 90 seconds to build and submit your route. 
+        </p>
+
+        <h5 className="fw-bold text-secondary">Scores</h5>
+        <p>
+            You start with 20 coins. 
+        </p>
+        <p>
+            If the route is valid, for each segment an unexpected event will appear that may add or deduct coins.
+        </p>
+        <p>
+            If the route is invalid or the final number of coins is negative, you will get 0 coins.
+        </p>
+
+    </div>);
 }
 
 function GameLayout() {
@@ -30,15 +55,15 @@ function GameLayout() {
 
     // Error handling
     if (errorSt) {
-        return (<div>{"Error with stations loading " + errorSt}</div>);
+        return (<div className="text-danger">{"Error with stations loading " + errorSt}</div>);
     }
 
     if (errorSeg) {
-        return (<div>{"Error with segments loading " + errorSeg}</div>);
+        return (<div className="text-danger">{"Error with segments loading " + errorSeg}</div>);
     }
 
     if (errorLine) {
-        return (<div>{"Error with lines loading " + errorSeg}</div>);
+        return (<div className="text-danger">{"Error with lines loading " + errorSeg}</div>);
     }
 
     if (stations.length === 0) {

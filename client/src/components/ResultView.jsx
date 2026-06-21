@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import GameScoreContext from "../contexts/GameScoreContext";
 import { Button } from "react-bootstrap";
+import { Coin, Trophy } from "react-bootstrap-icons";
 import { useNavigate } from "react-router";
 import { saveScore } from "../api/api";
 
@@ -49,9 +50,9 @@ function ResultView() {
     }
 
     return (<div className="d-flex flex-column align-items-center mt-5">
-        <h1 className="fw-bold text-info display-3 mb-3">Final score</h1>
+        <h1 className="fw-bold text-info display-3 mb-3">Final score <Trophy color="gold"/> </h1>
         {reasonScore && <p className="text-muted fs-5 mb-2">{reasonScore}</p>}
-        <div className="display-1 fw-bold text-info mb-4">{currScore}</div>
+        <div className="display-1 fw-bold text-info mb-4">{currScore} <Coin color="gold" size={45} className="mx-1"/> </div>
         <Button className="fw-semibold" variant="success" onClick={() => navigate('/game/start')}>Play again</Button>
     </div>);
 }

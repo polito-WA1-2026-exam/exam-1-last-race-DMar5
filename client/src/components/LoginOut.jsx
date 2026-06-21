@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
+import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { doLogin, doLogout } from '../api/auth.js';
 
 function LoginForm(props) {
@@ -51,7 +51,7 @@ function LoginForm(props) {
 
 function Logout(props) {
 
-    const [result, setResult] = useState("Logout completed");
+    const [errorLog, setErrorLog] = useState("");
 
     useEffect(()=>{
         async function tryLogout() {
@@ -61,17 +61,22 @@ function Logout(props) {
                     props.updateUser({id: undefined, name: undefined, surname: undefined, email: undefined})
                 }
                 else {
-                    setResult(logout);
+                    setErrorLog(logout);
                 }
             }
             catch(err) {
-                setResult(err.message);
+                setErrorLog(err.message);
             }
         }
         tryLogout();
     }, []);
 
-    return <h1>{result}</h1>;
+    if (errorLog) {
+        return <Alert className="text-center mt-4 mx-auto" variant="danger" style={{ maxWidth: "400px" }}>{errorLog}</Alert>
+    }
+    else {
+        return <Alert className="text-center mt-4 mx-auto" variant="success" style={{ maxWidth: "400px" }}>Logout completed</Alert>;
+    }
 }
 
 export { LoginForm, Logout }

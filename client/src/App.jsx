@@ -11,6 +11,7 @@ import ResultView from './components/ResultView.jsx';
 import RankingsView from './components/RankingsView.jsx';
 import PlanningView from './components/PlanningView.jsx';
 import ExecutionView from './components/ExecutionView.jsx';
+//import TryEvents from './components/TryEvents.jsx';
 
 import UserContext from './contexts/UserContext.js';
 import StationsContext from './contexts/StationsContext.js';
@@ -45,6 +46,7 @@ function App() {
                         <Route path='/' element={<Layout />}>
                             <Route index element={<HomeView />} />
                             <Route path='game' element={<GameLayout/>}>
+                                {/*<Route path='start' element={<TryEvents />} />*/}
                                 <Route path='start' element={<StartView />} />
                                 <Route path='planning' element={<PlanningView />} />
                                 <Route path='execute' element={<ExecutionView />} />

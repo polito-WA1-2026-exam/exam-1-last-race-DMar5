@@ -2,6 +2,8 @@ import { useContext } from "react";
 import { Button, Card } from "react-bootstrap"
 import { useNavigate } from "react-router"
 
+import { FaMapLocationDot } from "react-icons/fa6";
+
 import StationsContext from "../contexts/StationsContext";
 import SegmentsContext from "../contexts/SegmentsContext";
 import LinesContext from "../contexts/LineContext";
@@ -34,6 +36,9 @@ function StartView() {
                     <LinesView lines={lines}/>
                 </Card>
                 <svg width={750} height={640} className="border border-dark-subtle rounded">
+                    <foreignObject x={690} y={10} width={40} height={40}>
+                        <FaMapLocationDot style={{ color: "DeepPink", width: "100%", height: "100%" }}/>
+                    </foreignObject>
                     <SegmentsView segments={segments} lines={lines} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
                     <StationsView stations={stations} offsetX={offsetX} offsetY={offsetY} cellSize={cellSize}/>
                 </svg>

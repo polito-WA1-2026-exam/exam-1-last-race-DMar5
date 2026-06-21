@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { ListGroup, Card, Button, Badge } from "react-bootstrap";
+import { Stopwatch } from "react-bootstrap-icons";
 
 import { StationsView } from "./MapComponents";
 
@@ -60,7 +61,7 @@ function PlanningView() {
     }
 
     return ( <div className="d-flex flex-column align-items-center mt-4 gap-3">
-        <p className={`fw-bold fs-4 ${seconds <= 10 ? "text-danger" : "text-info"}`}>{"Time left: " + seconds + "s"}</p>
+        <p className={`fw-bold fs-4 ${seconds <= 10 ? "text-danger" : "text-info"}`}>Time left: {seconds}s <Stopwatch color="DeepPink"/></p>
         <p className="fs-5 text-dark">
             Start station: <span className="text-info">{startStation.station_name}</span>
         </p>
