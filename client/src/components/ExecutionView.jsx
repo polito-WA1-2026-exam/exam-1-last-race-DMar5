@@ -99,7 +99,7 @@ function ExecutionView() {
             const timeout = setTimeout(() => setIndex(prev => prev + 1), 2000);
             return () => clearTimeout(timeout);
         }
-        const timeout = setTimeout(() => setIndex(prev => prev + 1), 10000);
+        const timeout = setTimeout(() => setIndex(prev => prev + 1), 22000);
         return () => clearTimeout(timeout);
     }, [index]);
 
